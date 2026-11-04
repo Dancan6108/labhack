@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethical Lab KE - Staff Portal</title>
+<style>
+*{box-sizing:border-box} body{font-family:Arial,sans-serif;background:#f0f2f5;margin:0;color:#222}
+.top{background:#0a2540;color:#fff;padding:14px 20px;display:flex;justify-content:space-between} .top span{font-size:12px;opacity:.8}
+.center{max-width:1000px;margin:30px auto;padding:0 16px}
+.card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 4px 20px #0001;max-width:420px;margin:0 auto}
+input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px}
+button{width:100%;padding:12px;background:#0a2540;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+button.ghost{background:#fff;color:#0a2540;border:1px solid #ddd;margin-top:10px}
+#msg{color:#c00;font-size:13px;min-height:18px}
+.hidden{display:none} .badge{background:#e6f7ee;color:#00a651;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:bold}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#fff} th{background:#0a2540;color:#fff;padding:10px 8px;text-align:left} td{padding:10px 8px;border-bottom:1px solid #eee;white-space:nowrap}
+.wrap{overflow:auto;border-radius:12px;box-shadow:0 4px 20px #0001}
+.flag{background:#0a2540;color:#00ff88;padding:14px;border-radius:10px;margin:14px 0;font-family:monospace;display:none}
+.footer{text-align:center;color:#999;font-size:11px;padding:30px}
+.secret{font-family:monospace;background:#fff3cd;padding:2px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="top"><b>ETHICAL LAB KE</b><span>Staff Portal</span></div>
+<div class="center">
+
+<!-- STAFF LOGIN - SAME AS BEFORE -->
+<div class="card" id="loginCard">
+<span class="badge">● SYSTEM ONLINE</span>
+<h2 style="margin-top:12px">Welcome Back</h2><p style="color:#666;font-size:13px">Login to access staff portal</p>
+<input id="user" placeholder="Username or Email"><input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Login</button><p id="msg"></p>
+<button class="ghost" onclick="showRegister()">Create Account</button>
+</div>
+
+<div class="card hidden" id="regCard">
+<h2>Create Account</h2><input id="newuser" placeholder="Choose Username"><input id="newemail" placeholder="Email"><input id="newpass" placeholder="Choose Password"><input id="comment" placeholder="Bio / Department">
+<button onclick="register()" style="background:#00a651">Create Account</button><button class="ghost" onclick="hideRegister()">Back to Login</button>
+</div>
+
+<!-- STAFF DASH - SAME AS BEFORE -->
+<div class="hidden" id="dash">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Employee Database</h2><p style="color:#666;font-size:13px">Logged in as <b id="who"></b> • <span id="method"></span></p></div><button onclick="logout()" style="width:auto;background:#c00">Logout</button></div>
+<div class="flag" id="flagBox"></div>
+<div class="wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Address</th><th>Bank Account</th><th>Password</th></tr></thead><tbody id="empBody"></tbody></table></div>
+</div>
+
+<!-- ADMIN LOGIN - SAME CARD, RED -->
+<div class="card hidden" id="adminCard">
+<span class="badge" style="background:#ffecec;color:#c00">RESTRICTED</span>
+<h2 style="margin-top:12px">Admin Login</h2><p style="color:#666;font-size:13px">Authorized administrators only</p>
+<input id="au" placeholder="Admin Username"><input id="ap" type="password" placeholder="Admin Password">
+<button onclick="adminLogin()" style="background:#c00">Login as Admin</button><p id="adminMsg"></p>
+<button class="ghost" onclick="backToMain()">Back to Staff Login</button>
+</div>
+
+<!-- ADMIN DASH - NOW SMALL, ONLY 10 SECRETS -->
+<div class="hidden" id="adminDash">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0;color:#c00">🔒 COMPANY VAULT</h2><p style="margin:4px 0;color:#666;font-size:13px">Hidden admin secrets • Do not share</p></div><button onclick="logout()" style="width:auto;background:#c00">Logout</button></div>
+<div class="flag" id="adminFlag"></div>
+<div class="card" style="max-width:100%;margin:14px 0;border-left:4px solid #c00">
+<h3 style="margin:0">⚠️ 10 Hidden Company Secrets</h3><p style="color:#666;font-size:12px">Bank keys, Mpesa, server & CEO credentials - FAKE DATA FOR LAB</p>
+<div class="wrap"><table><thead><tr><th>#</th><th>Secret Type</th><th>Secret / Key</th><th>Owner</th></tr></thead><tbody id="adminBody"></tbody></table></div>
+</div>
+<div class="card" style="max-width:100%">
+<h3>🔑 Admin Credentials Vault</h3>
+<p style="font-size:13px;line-height:1.8">admin / admin123<br>superadmin / super123<br>root / toor123<br>labadmin / lab2026<br>ethical / ethical2026<br>manager / manager123</p>
+<p style="font-size:11px;color:#999">Training lab only - all fake</p>
+</div>
+</div>
+
+</div>
+<div class="footer">ETHICAL LAB KE - TRAINING LAB - FAKE DATA ONLY</div>
+
+<script>
+const EMP=[
+["EMP-001","James Mutua","james.mutua@ethicallab.ke","Moi Avenue, Nairobi","KCB 1234567890","james123"],
+["EMP-002","Faith Wanjiru","faith.wanjiru@ethicallab.ke","Westlands, Nairobi","Equity 2345678901","faith2024"],
+["EMP-003","Kevin Ochieng","kevin.ochieng@ethicallab.ke","Kisumu, Milimani","Co-op 3456789012","kevin99"],
+["EMP-004","Brian Kiprop","brian.kiprop@ethicallab.ke","Eldoret, Elgon View","NCBA 4567890123","brian1234"],
+["EMP-005","Mercy Atiendo","mercy.atiendo@ethicallab.ke","Mikinduri, Meru","KCB 5678901234","mercy001"],
+["EMP-006","Daniel Mwangi","daniel.mwangi@ethicallab.ke","Thika, Section 9","Equity 6789012345","daniel007"],
+["EMP-007","Sarah Njoroge","sarah.njoroge@ethicallab.ke","Nakuru, Milimani","Absa 7890123456","sarah123"],
+["EMP-008","Collins Barasa","collins.barasa@ethicallab.ke","Bungoma, Kanduyi","KCB 8901234567","collins22"]
+];
+// ONLY 10 ADMIN SECRETS - SMALL & POWERFUL
+const SECRETS=[
+["1","KCB Company Account","KCB 0112345678901 - Balance: KSh 4,250,000","Finance Dept"],
+["2","KCB API Secret Key","<span class='secret'>kcb_live_9f2kL8xQpZ7vN1m</span>","Finance Dept"],
+["3","Equity Payroll Account","Equity 0245678901234 - Balance: KSh 1,890,500","HR Dept"],
+["4","Mpesa Paybill Secret","Paybill: 400200 - Key: <span class='secret'>mpesa_sk_88aK2pLq</span>","Payments"],
+["5","Mpesa Till Number","Till: 567890 - PIN: 2026","Shop"],
+["6","CEO Email Password","ceo@ethicallab.ke / <span class='secret'>Ceo2026!Secret</span>","CEO"],
+["7","Server Root Password","server.ethicallab.ke / <span class='secret'>Root@2026#Lab</span>","IT Admin"],
+["8","AWS Secret Key","<span class='secret'>AKIAFAKE1234567890</span>","DevOps"],
+["9","Database Password","db_user: admin / <span class='secret'>DBpass!2026</span>","IT Admin"],
+["10","Safe / Vault Code","Office Safe: <span class='secret'>4826#</span> - Branch: Mikinduri","Manager"]
+];
+const STAFF_USERS=[{u:"admin",p:"admin123"},{u:"superadmin",p:"super123"},{u:"root",p:"toor123"},{u:"labadmin",p:"lab2026"},{u:"ethical",p:"ethical2026"},{u:"student",p:"student123"},{u:"test",p:"test123"},{u:"kiddie",p:"kid01"}];
+const ADMIN_USERS=[{u:"admin",p:"admin123"},{u:"superadmin",p:"super123"},{u:"root",p:"toor123"},{u:"labadmin",p:"lab2026"},{u:"ethical",p:"ethical2026"},{u:"manager",p:"manager123"}];
+
+function renderStaff(){document.getElementById("empBody").innerHTML=EMP.map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td><td><b>${r[4]}</b></td><td style="color:#c00">${r[5]}</td></tr>`).join("")}
+function renderAdmin(){document.getElementById("adminBody").innerHTML=SECRETS.map(r=>`<tr><td>${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("")}
+function login(){
+let u=document.getElementById("user").value.trim(); let p=document.getElementById("pass").value;
+if(u.includes("' OR '1'='1")||u.includes("' or 1=1")){
+document.getElementById("loginCard").classList.add("hidden"); document.getElementById("dash").classList.remove("hidden");
+document.getElementById("who").innerText="admin (via SQLi)"; document.getElementById("method").innerText="SQL Injection";
+let f=document.getElementById("flagBox"); f.style.display="block"; f.innerHTML="🏆 FLAG{SQLi_Master} - Dumping database..."; renderStaff(); return;
+}
+if(STAFF_USERS.find(x=>x.u===u&&x.p===p)){document.getElementById("loginCard").classList.add("hidden"); document.getElementById("dash").classList.remove("hidden"); document.getElementById("who").innerText=u; document.getElementById("method").innerText="Valid Login / Weak Creds"; renderStaff();}
+else document.getElementById("msg").innerText="Invalid username or password";
+}
+function showRegister(){document.getElementById("loginCard").classList.add("hidden");document.getElementById("regCard").classList.remove("hidden")}
+function hideRegister(){document.getElementById("regCard").classList.add("hidden");document.getElementById("loginCard").classList.remove("hidden")}
+function register(){alert("Account created! Now login.");hideRegister()}
+function logout(){location.reload()}
+function checkAdmin(){
+if(window.location.hash==="#admin"){
+document.getElementById("loginCard").classList.add("hidden");document.getElementById("dash").classList.add("hidden");document.getElementById("adminCard").classList.remove("hidden");
+}
+}
+function adminLogin(){
+let u=document.getElementById("au").value.trim(); let p=document.getElementById("ap").value.trim();
+if(ADMIN_USERS.find(x=>x.u===u&&x.p===p)){
+document.getElementById("adminCard").classList.add("hidden");document.getElementById("adminDash").classList.remove("hidden");
+let f=document.getElementById("adminFlag"); f.style.display="block"; f.innerHTML="🏆 FLAG{Hidden_Admin_Found} - Vault unlocked - 10 company secrets exposed";
+renderAdmin();
+}else document.getElementById("adminMsg").innerText="Invalid admin credentials";
+}
+function backToMain(){document.getElementById("adminCard").classList.add("hidden");document.getElementById("loginCard").classList.remove("hidden");window.location.hash=""}
+window.addEventListener("hashchange",checkAdmin); checkAdmin(); renderStaff();
+</script>
+</body>
+</html>
