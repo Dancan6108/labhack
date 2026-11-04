@@ -3,7 +3,6 @@
 A fake company staff portal built for **cybersecurity training only**.
 All data is fake. Do NOT use on a real company.
 
-Live Demo: https://ethicallab.netlify.app
 
 ---
 
